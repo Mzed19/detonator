@@ -1,0 +1,157 @@
+[
+    {
+        "label": "request",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "jsonify",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "Flask",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "Blueprint",
+        "importPath": "flask_smorest",
+        "description": "flask_smorest",
+        "isExtraImport": true,
+        "detail": "flask_smorest",
+        "documentation": {}
+    },
+    {
+        "label": "Api",
+        "importPath": "flask_smorest",
+        "description": "flask_smorest",
+        "isExtraImport": true,
+        "detail": "flask_smorest",
+        "documentation": {}
+    },
+    {
+        "label": "easyocr",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "easyocr",
+        "description": "easyocr",
+        "detail": "easyocr",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "scraper_bp",
+        "importPath": "services.scraper",
+        "description": "services.scraper",
+        "isExtraImport": true,
+        "detail": "services.scraper",
+        "documentation": {}
+    },
+    {
+        "label": "extract_text",
+        "kind": 2,
+        "importPath": "flask-dockerized.services.scraper",
+        "description": "flask-dockerized.services.scraper",
+        "peekOfCode": "def extract_text():\n    \"\"\"Endpoint para extrair texto de uma imagem usando OCR\"\"\"\n    file = request.files['image']  # Recebe a imagem\n    img = Image.open(file)\n    # Realiza o OCR\n    extracted_text = reader.readtext(img, detail=0)\n    # Retorna o texto extraído\n    return jsonify({'text': ' '.join(extracted_text)})",
+        "detail": "flask-dockerized.services.scraper",
+        "documentation": {}
+    },
+    {
+        "label": "scraper_bp",
+        "kind": 5,
+        "importPath": "flask-dockerized.services.scraper",
+        "description": "flask-dockerized.services.scraper",
+        "peekOfCode": "scraper_bp = Blueprint(\"scraper\", __name__, description=\"Operações de OCR\")\n# Instancia o leitor de OCR\nreader = easyocr.Reader(['en', 'pt'])  # Suporta português e inglês\n# Define a rota dentro do blueprint\n@scraper_bp.route('/extract', methods=['POST'])\ndef extract_text():\n    \"\"\"Endpoint para extrair texto de uma imagem usando OCR\"\"\"\n    file = request.files['image']  # Recebe a imagem\n    img = Image.open(file)\n    # Realiza o OCR",
+        "detail": "flask-dockerized.services.scraper",
+        "documentation": {}
+    },
+    {
+        "label": "reader",
+        "kind": 5,
+        "importPath": "flask-dockerized.services.scraper",
+        "description": "flask-dockerized.services.scraper",
+        "peekOfCode": "reader = easyocr.Reader(['en', 'pt'])  # Suporta português e inglês\n# Define a rota dentro do blueprint\n@scraper_bp.route('/extract', methods=['POST'])\ndef extract_text():\n    \"\"\"Endpoint para extrair texto de uma imagem usando OCR\"\"\"\n    file = request.files['image']  # Recebe a imagem\n    img = Image.open(file)\n    # Realiza o OCR\n    extracted_text = reader.readtext(img, detail=0)\n    # Retorna o texto extraído",
+        "detail": "flask-dockerized.services.scraper",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "flask-dockerized.app",
+        "description": "flask-dockerized.app",
+        "peekOfCode": "app = Flask(__name__)\napp.config[\"PROPAGATE_EXCEPTIONS\"] = True\napp.config[\"API_TITLE\"] = \"Scraper\"\napp.config[\"API_VERSION\"] = \"v1\"\napp.config[\"OPENAPI_VERSION\"] = \"3.0.3\"\napp.config[\"OPENAPI_URL_PREFIX\"] = \"/\"\napi = Api(app)\napi.register_blueprint(scraper_bp)",
+        "detail": "flask-dockerized.app",
+        "documentation": {}
+    },
+    {
+        "label": "app.config[\"PROPAGATE_EXCEPTIONS\"]",
+        "kind": 5,
+        "importPath": "flask-dockerized.app",
+        "description": "flask-dockerized.app",
+        "peekOfCode": "app.config[\"PROPAGATE_EXCEPTIONS\"] = True\napp.config[\"API_TITLE\"] = \"Scraper\"\napp.config[\"API_VERSION\"] = \"v1\"\napp.config[\"OPENAPI_VERSION\"] = \"3.0.3\"\napp.config[\"OPENAPI_URL_PREFIX\"] = \"/\"\napi = Api(app)\napi.register_blueprint(scraper_bp)",
+        "detail": "flask-dockerized.app",
+        "documentation": {}
+    },
+    {
+        "label": "app.config[\"API_TITLE\"]",
+        "kind": 5,
+        "importPath": "flask-dockerized.app",
+        "description": "flask-dockerized.app",
+        "peekOfCode": "app.config[\"API_TITLE\"] = \"Scraper\"\napp.config[\"API_VERSION\"] = \"v1\"\napp.config[\"OPENAPI_VERSION\"] = \"3.0.3\"\napp.config[\"OPENAPI_URL_PREFIX\"] = \"/\"\napi = Api(app)\napi.register_blueprint(scraper_bp)",
+        "detail": "flask-dockerized.app",
+        "documentation": {}
+    },
+    {
+        "label": "app.config[\"API_VERSION\"]",
+        "kind": 5,
+        "importPath": "flask-dockerized.app",
+        "description": "flask-dockerized.app",
+        "peekOfCode": "app.config[\"API_VERSION\"] = \"v1\"\napp.config[\"OPENAPI_VERSION\"] = \"3.0.3\"\napp.config[\"OPENAPI_URL_PREFIX\"] = \"/\"\napi = Api(app)\napi.register_blueprint(scraper_bp)",
+        "detail": "flask-dockerized.app",
+        "documentation": {}
+    },
+    {
+        "label": "app.config[\"OPENAPI_VERSION\"]",
+        "kind": 5,
+        "importPath": "flask-dockerized.app",
+        "description": "flask-dockerized.app",
+        "peekOfCode": "app.config[\"OPENAPI_VERSION\"] = \"3.0.3\"\napp.config[\"OPENAPI_URL_PREFIX\"] = \"/\"\napi = Api(app)\napi.register_blueprint(scraper_bp)",
+        "detail": "flask-dockerized.app",
+        "documentation": {}
+    },
+    {
+        "label": "app.config[\"OPENAPI_URL_PREFIX\"]",
+        "kind": 5,
+        "importPath": "flask-dockerized.app",
+        "description": "flask-dockerized.app",
+        "peekOfCode": "app.config[\"OPENAPI_URL_PREFIX\"] = \"/\"\napi = Api(app)\napi.register_blueprint(scraper_bp)",
+        "detail": "flask-dockerized.app",
+        "documentation": {}
+    },
+    {
+        "label": "api",
+        "kind": 5,
+        "importPath": "flask-dockerized.app",
+        "description": "flask-dockerized.app",
+        "peekOfCode": "api = Api(app)\napi.register_blueprint(scraper_bp)",
+        "detail": "flask-dockerized.app",
+        "documentation": {}
+    }
+]

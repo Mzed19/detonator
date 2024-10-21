@@ -1,10 +1,16 @@
-import requests
+from flask import request, jsonify
+from flask_smorest import Blueprint
 
-requisition_quantity = 0
-response = []
+main_bp = Blueprint("test", __name__, description="Initial test")
 
-while requisition_quantity < 10:
-  requisition_quantity += 1
-  response.append(requests.get('https://jsonplaceholder.typicode.com/posts'))
+informationsOfTarget = {}
 
-print(response)
+@main_bp.route('/save', methods=['POST'])
+def test():
+    global informationsOfTarget
+    informationsOfTarget = request.get_json()
+    return jsonify(informationsOfTarget)
+
+@main_bp.route('/test2', methods=['GET'])
+def test2():
+    return jsonify(informationsOfTarget)

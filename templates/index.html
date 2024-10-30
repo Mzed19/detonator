@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body class="bg-dark">
+    <div id="app">
+        <div class="container">
+            <div class="row mt-4">
+                <div class="input-group bg-dark">
+                    <span class="input-group-text bg-dark text-white">Endpoint</span>
+                    <input class="form-control bg-dark text-white" v-model="targetInformations.endpoint" aria-label="With input">
+                </div>
+                <div class="input-group bg-dark mt-1">
+                    <span class="input-group-text bg-dark text-white">Authorization</span>
+                    <input class="form-control bg-dark text-white" v-model="targetInformations.authorization" aria-label="With input">
+                </div>
+                <div class="input-group mt-1">
+                    <span class="input-group-text bg-dark text-white">Json payload</span>
+                    <textarea class="form-control bg-dark text-white" v-model="targetInformations.jsonPayload" aria-label="With textarea"></textarea>
+                </div>
+            </div>
+        
+            <div class="row">
+                <div class="col-5 input-group mt-1 w-50">
+                    <span class="input-group-text bg-dark text-white">Consumers quantity</span>
+                    <input class="form-control bg-dark text-white" v-model="targetInformations.consumersQuantity" type="number">
+                </div>
+                <div class="col-5 input-group mt-1 w-50">
+                    <span class="input-group-text bg-dark text-white">Requests per consumer</span>
+                    <input class="form-control bg-dark text-white" v-model="targetInformations.requestsPerConsumer" type="number">
+                </div>
+
+                <p class="text-white">Take care, each consumer is one container Docker.</p>
+
+                <div class="d-flex justify-content-center mt-4">
+                    <button class="btn btn-primary btn-lg" @click="sendInformations()" type="button">Save</button>
+                </div>
+            </div>
+
+            <div class="row">
+               
+            
+
+                <hr class="w-100 bg-white text-white my-4">
+
+                <div class="d-flex justify-content-center mt-4" v-if="hasTargetInformations">
+                    <button class="btn btn-primary btn-lg" @click="detonate()" type="button">Detonate!</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <button class="btn btn-primary btn-lg  mt-2 w-100" @click="response = ''" type="button">Clear</button>
+
+                <div class="mt-3">
+                    <textarea class="form-control bg-dark text-white w-100" :value="formattedText" readonly rows="10"></textarea>
+                </div>
+
+                <button class="btn btn-primary btn-lg  mt-2 w-100" @click="response = ''" type="button">Clear</button>
+            </div>
+            
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    
+    <script>
+    const socket = io("http://localhost:5000")
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            targetInformations: {
+                endpoint: "",
+                authorization: "",
+                jsonPayload: "",
+                consumersQuantity: 0,
+                requestsPerConsumer: 0
+            },
+            hasTargetInformations: false,
+            response: 'Started'
+        },
+        computed: {
+            formattedText() {
+                return this.response.replace(/\n/g, '\n');
+            }
+        },
+        mounted() {
+            this.getInformations();
+            
+            socket.on('message', (data) => {
+                console.log('Mensagem recebida do servidor:', data);
+                this.response += '\n' + data.message; 
+            });
+        },
+
+        methods: {
+            async sendInformations() {
+                await axios.post('http://localhost:5000', this.targetInformations);
+                this.getInformations();
+            },
+
+            async getInformations() {
+                let response = await axios.get('http://localhost:5000/target-infos');
+                this.targetInformations = response.data;
+                this.hasTargetInformations = Object.keys(this.targetInformations).length !== 0;
+            },
+
+            async detonate() {
+                // Envie uma mensagem após detonar
+                socket.send('Detonate triggered!'); // Envie uma mensagem para o servidor via WebSocket
+            }
+        }
+    });
+    </script>
+</body>
+</html>

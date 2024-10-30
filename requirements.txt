@@ -3,3 +3,6 @@ flask-smorest
 python-dotenv
 requests
 Flask-Caching
+flask-cors
+flask-socketio
+eventlet

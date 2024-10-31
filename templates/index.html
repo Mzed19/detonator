@@ -34,29 +34,45 @@
                     <input class="form-control bg-dark text-white" v-model="targetInformations.requestsPerConsumer" type="number">
                 </div>
 
-                <p class="text-white">Take care, each consumer is one container Docker.</p>
-
                 <div class="d-flex justify-content-center mt-4">
                     <button class="btn btn-primary btn-lg" @click="sendInformations()" type="button">Save</button>
                 </div>
             </div>
-
+            
             <div class="row">
                 <hr class="w-100 bg-white text-white my-4">
 
-                <div class="d-flex justify-content-center mt-4" v-if="hasTargetInformations">
+                <div class="d-flex justify-content-center mt-1" v-if="hasTargetInformations">
                     <button class="btn btn-primary btn-lg" @click="detonate()" type="button">Detonate!</button>
                 </div>
             </div>
 
-            <div class="row">
-                <button class="btn btn-primary btn-lg  mt-2 w-100" @click="response = ''" type="button">Clear</button>
+            <div class="row mt-4 text-white lead">
+                <p>Métricas de Requisições</p>
+                <div class="col-3 mb-2">
+                    <label for="averageExecutionTime" class="form-label"><small>Média de Tempo de Execução</small></label>
+                    <input type="text" id="averageExecutionTime" class="form-control bg-dark text-white" :value="metrics.averageExecutionTime" readonly>
+                </div>
+                <div class="col-3 mb-2">
+                    <label for="maxExecutionTime" class="form-label"><small>Maior Tempo de Execução</small></label>
+                    <input type="text" id="maxExecutionTime" class="form-control bg-dark text-white" :value="metrics.maxExecutionTime" readonly>
+                </div>
+                <div class="col-3 mb-2">
+                    <label for="totalRequests" class="form-label"><small>Total de Requisições</small></label>
+                    <input type="text" id="totalRequests" class="form-control bg-dark text-white" :value="metrics.totalRequests" readonly>
+                </div>
+                <div class="col-3 mb-2">
+                    <label for="dateTime" class="form-label"><small>Data da Última Requisição</small></label>
+                    <input type="text" id="dateTime" class="form-control bg-dark text-white" :value="metrics.dateTime" readonly>
+                </div>
+            </div>
 
+            <div class="row">
                 <div class="mt-3">
                     <textarea class="form-control bg-dark text-white w-100" :value="formattedText" readonly rows="10"></textarea>
                 </div>
 
-                <button class="btn btn-primary btn-lg  mt-2 w-100" @click="response = ''" type="button">Clear</button>
+                <button class="btn btn-primary btn-lg  mt-2 w-100" @click="response = ''; metrics = {}" type="button">Clear</button>
             </div>
             
         </div>
@@ -81,7 +97,12 @@
                 requestsPerConsumer: 0
             },
             hasTargetInformations: false,
-            response: 'Started'
+            response: 'Started',
+            metrics:{
+                averageExecutionTime: 0,
+                dateTime: 0,
+                totalRequests: 0
+            }
         },
         computed: {
             formattedText() {
@@ -91,9 +112,18 @@
         mounted() {
             this.getInformations();
             
-            socket.on('message', (data) => {
-                console.log('Mensagem recebida do servidor:', data);
-                this.response += '\n' + 'Status: '+data.status + '\n'+'Tempo de requisição: '+data.content.requestTime+'\n'; 
+            socket.on('requests', (requestInformations) => {
+                this.response += '\n' + 
+                    'Status: '+requestInformations.status + 
+                    '\n'+'Requisição: '+requestInformations.content.requestNumber+
+                    '\n'+'Tempo de requisição: '+requestInformations.content.executionTime+
+                    '\n'+'Data da requisição: '+requestInformations.content.dateTime+
+                    '\n'; 
+            });
+
+            socket.on('metrics', (metrics) => {
+                this.metrics = metrics; 
+                console.log(this.metrics)
             });
         },
 

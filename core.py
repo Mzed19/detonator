@@ -33,6 +33,15 @@ class TargetInformations:
             'json_payload': self.json_payload,
             'requests_per_consumer': self.requests_per_consumer
         }
+        
+    def camel_case(self):
+        return {
+            'endpoint': self.endpoint,
+            'authorization': self.authorization,
+            'consumersQuantity': self.consumers_quantity,
+            'jsonPayload': self.json_payload,
+            'requestsPerConsumer': self.requests_per_consumer
+        }
 
 informationsOfTarget = TargetInformations('yourApi', 'yourToken', 1, {}, 1)
 
@@ -48,23 +57,49 @@ def save_target_informations():
     informationsOfTarget = TargetInformations(
         data.get('endpoint'),
         data.get('authorization'),
-        data.get('consumers_quantity'),
-        data.get('json_payload'),
-        data.get('requests_per_consumer')
+        data.get('consumersQuantity'),
+        data.get('jsonPayload'),
+        data.get('requestsPerConsumer')
     )
 
-    return jsonify(informationsOfTarget.to_dict())
+    return jsonify(informationsOfTarget.camel_case())
 
 @main_bp.route('/target-infos', methods=['GET'])
 def get_target_informations():
-    return jsonify(informationsOfTarget.to_dict())
+    return jsonify(informationsOfTarget.camel_case())
 
 @main_bp.route('/detonate', methods=['GET'])
 def detonate():
-    madeRequests = 0
+    made_requests = 0
 
-    while informationsOfTarget.requests_per_consumer > madeRequests:
-        response = requests.get(informationsOfTarget.endpoint)
-        madeRequests += 1
-
-    return jsonify(response.json())
+    
+    while int(informationsOfTarget.requests_per_consumer) > made_requests:
+        try:
+            response = requests.get(informationsOfTarget.endpoint)
+            elapsed_time = response.elapsed.total_seconds()
+            
+            socketio.emit('message', {
+                'status': 'Success',
+                'content': {
+                    'requestTime': elapsed_time
+                }
+            }, namespace='/')
+            
+            socketio.sleep(0.1)
+            
+        except:
+            socketio.emit('message', {
+                'status': 'Error',
+                'content': {
+                    'requestTime': elapsed_time
+                }
+            }, namespace='/')
+            
+            socketio.sleep(0.1)
+            
+        made_requests += 1
+        
+        
+    return jsonify('Finished')
+    
+    

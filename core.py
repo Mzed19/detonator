@@ -3,6 +3,7 @@ from flask_smorest import Blueprint
 from flask_socketio import send, SocketIO
 import requests
 from datetime import datetime
+import json
 
 main_bp = Blueprint("test", __name__, description="Initial test")
 
@@ -78,6 +79,12 @@ def run_detonation():
     while int(informationsOfTarget.requests_per_consumer) > made_requests:
         try:
             response = requests.get(informationsOfTarget.endpoint)
+            
+            try:
+                response_from_client = json.dumps(response.json())
+            except ValueError:
+                response_from_client = response.text
+
             elapsed_time = response.elapsed.total_seconds()
             
             socketio.emit('requests', {
@@ -85,7 +92,8 @@ def run_detonation():
                 'content': {
                     'executionTime': elapsed_time,
                     'dateTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    'requestNumber': str(made_requests)
+                    'requestNumber': str(made_requests),
+                    'responseFromClient': response_from_client
                 }
             }, namespace='/')
 
@@ -100,7 +108,8 @@ def run_detonation():
                     'message': str(e),
                     'executionTime': elapsed_time if 'elapsed_time' in locals() else 0,
                     'dateTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    'requestNumber': str(made_requests)
+                    'requestNumber': str(made_requests),
+                    'responseFromClient': response_from_client
                 }
             }, namespace='/')
 

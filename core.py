@@ -90,6 +90,7 @@ def run_detonation():
             socketio.emit('requests', {
                 'status': 'Success',
                 'content': {
+                    'message': 'Finished',
                     'executionTime': elapsed_time,
                     'dateTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'requestNumber': str(made_requests),

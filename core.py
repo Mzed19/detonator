@@ -42,6 +42,7 @@ class TargetInformations:
 
 informationsOfTarget = TargetInformations('yourApi', 'yourToken', 1, {}, 1)
 requests_elapsed_time = []
+made_requests = 0
 
 @main_bp.route('/')
 def index():
@@ -68,16 +69,22 @@ def get_target_informations():
 
 @main_bp.route('/detonate', methods=['GET'])
 def detonate():
+    global made_requests
+    made_requests = 0
+    
     global requests_elapsed_time
     for _ in range(int(informationsOfTarget.consumers_quantity)): 
         socketio.start_background_task(run_detonation)
-    return jsonify('Started 5 detonation tasks')
+    return jsonify('Started')
 
 def run_detonation():
-    made_requests = 0
+    global made_requests
+    init_date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     while int(informationsOfTarget.requests_per_consumer) > made_requests:
         try:
+            made_requests += 1
+            
             response = requests.get(informationsOfTarget.endpoint)
             
             try:
@@ -92,14 +99,15 @@ def run_detonation():
                 'content': {
                     'message': 'Finished',
                     'executionTime': elapsed_time,
-                    'dateTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'initDateTime': init_date_time,
+                    'finalDateTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'requestNumber': str(made_requests),
                     'responseFromClient': response_from_client
                 }
             }, namespace='/')
 
             socketio.sleep(0.1)
-
+            
             send_requisitions_metrics(elapsed_time)
 
         except Exception as e:
@@ -108,21 +116,21 @@ def run_detonation():
                 'content': {
                     'message': str(e),
                     'executionTime': elapsed_time if 'elapsed_time' in locals() else 0,
-                    'dateTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'initDateTime': init_date_time,
+                    'finalDateTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'requestNumber': str(made_requests),
-                    'responseFromClient': response_from_client
+                    'responseFromClient': ''
                 }
             }, namespace='/')
 
-            socketio.sleep(0.1)
+            send_requisitions_metrics(elapsed_time)
+            
+    socketio.sleep(0.1) 
 
-        made_requests += 1
-    
-    return jsonify('Finished detonation tasks')
+    return jsonify('Finished')
 
 def send_requisitions_metrics(elapsed_time):
     requests_elapsed_time.append(elapsed_time)
-    
     
     if requests_elapsed_time:
         average_time = sum(requests_elapsed_time) / len(requests_elapsed_time)
@@ -136,7 +144,7 @@ def send_requisitions_metrics(elapsed_time):
         'averageExecutionTime': average_time,
         'totalRequests': len(requests_elapsed_time),
         'maxExecutionTime': max_time, 
-        'dateTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        'finalDateTime': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }, namespace='/')
 
         

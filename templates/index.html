@@ -26,16 +26,16 @@
         
             <div class="row">
                 <div class="col-5 input-group mt-1 w-50">
-                    <span class="input-group-text bg-dark text-white">Consumers quantity</span>
+                    <span class="input-group-text bg-dark text-white">Quantidade de consumidores</span>
                     <input class="form-control bg-dark text-white" v-model="targetInformations.consumersQuantity" type="number">
                 </div>
                 <div class="col-5 input-group mt-1 w-50">
-                    <span class="input-group-text bg-dark text-white">Requests per consumer</span>
+                    <span class="input-group-text bg-dark text-white">Quantidade de requisições</span>
                     <input class="form-control bg-dark text-white" v-model="targetInformations.requestsPerConsumer" type="number">
                 </div>
 
                 <div class="d-flex justify-content-center mt-4">
-                    <button class="btn btn-primary btn-lg" @click="sendInformations()" type="button">Save</button>
+                    <button class="btn btn-primary btn-lg" @click="sendInformations()" type="button">Salvar</button>
                 </div>
             </div>
             
@@ -67,9 +67,10 @@
                 </div>
             </div>
 
-            <div class="text-white">
-                <hr class="w-100 bg-white text-white my-4">
+            <hr class="w-100 bg-white text-white my-4">
 
+            <div class="text-white justify-content-center text-center align-items-center">
+                <p class="lead">Histórico de Requisições</p>
                 <div v-for="requestInformation in listRequestInformations" class="col-12">
                     <div class="row justify-content-center text-center align-items-center">
                         <div class="col-3 mb-2">
@@ -78,16 +79,39 @@
                         </div>
                         <div class="col-3 mb-2">
                             <label for="maxExecutionTime" class="form-label"><small>Ínicio da Requisição</small></label>
-                            <input type="text" id="maxExecutionTime" class="form-control bg-dark text-white" :value="requestInformation.dateTime" readonly>
+                            <input type="text" id="maxExecutionTime" class="form-control bg-dark text-white" :value="requestInformation.initDateTime" readonly>
                         </div>
                         <div class="col-3 mb-2">
+                            <label for="maxExecutionTime" class="form-label"><small>Final da Requisição</small></label>
+                            <input type="text" id="maxExecutionTime" class="form-control bg-dark text-white" :value="requestInformation.finalDateTime" readonly>
+                        </div>
+                        <div class="col-2 mb-2">
                             <label for="totalRequests" class="form-label"><small>N da Requisição</small></label>
                             <input type="text" id="totalRequests" class="form-control bg-dark text-white" :value="requestInformation.requestNumber" readonly>
                         </div>
                         <div class="col-1 mb-2">
-                            <button class="btn btn-primary" type="button" style="margin-top: 1.9rem!important;">Detalhes</button>
+                            <button data-bs-toggle="modal" @click="selectedResponseFromClient = requestInformation.responseFromClient" data-bs-target="#exampleModal" class="btn btn-primary" type="button" style="margin-top: 1.9rem!important;">
+                                Detalhes
+                            </button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content bg-dark">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="" class="form-label"></label>
+                            <textarea v-model="selectedResponseFromClient" class="form-control bg-dark text-white" name="" id="" rows="30"></textarea>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary mt-3" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
                 </div>
             </div>
             
@@ -107,6 +131,7 @@
         el: '#app',
         data: {
             listRequestInformations: [],
+            selectedResponseFromClient: "",
             targetInformations: {
                 endpoint: "",
                 authorization: "",

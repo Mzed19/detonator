@@ -6,7 +6,12 @@ Use steps:
 
 ![image](https://github.com/user-attachments/assets/ed3df37b-c3fa-4cf2-b7db-8f7ef4655079)
 
+Features and technologies:
+- Flask (Python)
+- HTML
+- CSS
+- Docker
+- Web Socket
 
-All change files are applyed in real-time on containe.
+All change files are applyed in real-time on container.
 Good lucky on new project, my friend.
-

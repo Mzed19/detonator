@@ -2,7 +2,8 @@ Build steps:
 - Execute "docker-compose up -d", this command will build and up this app.
 
 Use steps:
-- Acess "http://localhost:5000".
+- Access frontend with "http://127.0.0.1:5000/".
+- Access the unique endpoint with "http://localhost:5000/extract-text/pytesseract" or "http://localhost:5000/extract-text/easyocr". 
 
 ![image](https://github.com/user-attachments/assets/ed3df37b-c3fa-4cf2-b7db-8f7ef4655079)
 

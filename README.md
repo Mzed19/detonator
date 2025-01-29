@@ -1,3 +1,7 @@
+This project will test how much requisitions your application can handle.
+
+You will still need change the authorization settings on source code on "/detonator/core.py".
+
 Build steps:
 - Execute "docker-compose up -d", this command will build and up this app.
 
